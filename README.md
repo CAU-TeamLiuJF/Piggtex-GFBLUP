@@ -1,1 +1,1 @@
-# Piggetx-GFBLUP
+# PigGTEx-GFBLUP
