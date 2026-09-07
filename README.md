@@ -1,29 +1,31 @@
 # PigGTEx-GFBLUP
-基于 PigGTEx QTL 注释的猪基因组预测（GFBLUP）分析。
 
-> 注：以下以 lncQTL（data5 群体，性状 AGE/BF/TNB）为例；切换其他 QTL 类型或数据集时，
-> 需同步修改各脚本顶部写死的 PigGTEx 目录、rds 编号与 traits。
+Genomic prediction (GFBLUP) in pigs informed by PigGTEx QTL annotations.
 
-## 脚本功能
+> Note: The pipeline below is demonstrated with lncQTL (dataset data5, traits AGE/BF/TNB).
+> To switch to other QTL types (eQTL/sQTL, etc.) or datasets, update the hard-coded PigGTEx
+> input directory, RDS ID, and traits at the top of each script accordingly.
 
-| 脚本 | 功能 |
+## Scripts
+
+| Script | Function |
 |---|---|
-| `piggtex_d.R` | 将 PigGTEx 显著 QTL 与芯片 SNP 匹配（精准 + ±50 kb），按组织输出 QTL SNP 列表 |
-| `qtl_piggtex_gs_50kb.R` | 用 QTL SNP + 背景 SNP 双随机效应 GFBLUP 做 5 折×2 重复交叉验证，计算预测准确性 cor 与 bias |
-| `result_summary.R` | 汇总各 性状×组织 的交叉验证结果，输出 cor/bias 均值±SD |
-| `submit_qtl.sh` | SLURM 数组作业批量提交（每任务 = 一个 性状×组织 组合） |
+| `piggtex_d.R` | Matches PigGTEx significant QTLs to chip SNPs (exact + ±50 kb), outputs a per-tissue list of QTL SNPs |
+| `qtl_piggtex_gs_50kb.R` | Performs 5-fold × 2-repeat cross-validation using GFBLUP with two random effects (QTL SNPs + background SNPs), evaluating prediction accuracy (cor) and bias |
+| `result_summary.R` | Summarizes cross-validation results across trait × tissue combinations, reporting mean ± SD of cor and bias |
+| `submit_qtl.sh` | SLURM array job for batch submission (one task per trait × tissue combination) |
 
-## 使用方法
+## Usage
 
 ```bash
-# 1. 生成 QTL 注释（参数 1~5 对应不同芯片，见脚本注释）
+# 1. Generate QTL annotations (argument 1-5 selects the chip, see script comments)
 Rscript piggtex_d.R 5
 
-# 2. 提交交叉验证（先确认 submit_qtl.sh 中启用的 Rscript 行）
+# 2. Submit cross-validation (first confirm the enabled Rscript line in submit_qtl.sh)
 sbatch submit_qtl.sh
 
-# 3. 汇总结果
+# 3. Summarize results
 Rscript result_summary.R
 ```
 
-依次运行即可。
+Run the scripts in order.
